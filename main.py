@@ -1,19 +1,15 @@
 import os
 import sys
 
-from langchain_openai import OpenAI
-from langchain_openai import ChatOpenAI
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain, SequentialChain
-from langchain.agents import AgentType, initialize_agent, Tool
-from langchain.memory import ConversationBufferMemory
-from langchain.chains import ConversationChain
-from langchain_core.messages import BaseMessage
-from pydantic import BaseModel, Field
-
-from langchain_core.chat_history import BaseChatMessageHistory, InMemoryChatMessageHistory
+from langchain.agents import AgentType, Tool, initialize_agent
+from langchain.chains import ConversationChain, LLMChain, SequentialChain
+from langchain_core.chat_history import InMemoryChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder, PromptTemplate
 from langchain_community.callbacks.manager import get_openai_callback
+from langchain_community.chat_message_histories import ChatMessageHistory
+from langchain_openai import ChatOpenAI, OpenAI
+
 
 def simple_model_call():
     # Initialize the OpenAI LLM
@@ -137,7 +133,7 @@ def memory_example():
     # Create a chat prompt template that correctly handles messages
     prompt = ChatPromptTemplate.from_messages([
         ("system", "You are a helpful assistant."),
-        ("history", "{history}"),  # This will be replaced with formatted history
+        MessagesPlaceholder(variable_name="history"),
         ("human", "{input}")
     ])
 
@@ -180,28 +176,27 @@ def memory_example():
     )
     print(f"AI: {response3.content}")
 
-
 if __name__ == "__main__":
     # Check for OpenAI API key
-    # if not os.getenv("OPENAI_API_KEY"):
-    #     print("Error: OPENAI_API_KEY environment variable must be set")
-    #     sys.exit(1)
+    if not os.getenv("OPENAI_API_KEY"):
+        print("Error: OPENAI_API_KEY environment variable must be set")
+        sys.exit(1)
     #
     # # Example 1: Simple LLM call
-    # print("=== Example 1: Simple LLM Call ===")
-    # simple_model_call()
+    print("=== Example 1: Simple LLM Call ===")
+    simple_model_call()
     #
     # # Example 2: Using a prompt template
-    # print("\n=== Example 2: Using a Prompt Template ===")
-    # prompt_template_example()
-    #
+    print("\n=== Example 2: Using a Prompt Template ===")
+    prompt_template_example()
+
     # # Example 3: Using a Chain
-    # print("\n=== Example 3: Using a Chain ===")
-    # chain_example()
-    #
+    print("\n=== Example 3: Using a Chain ===")
+    chain_example()
+
     # # Example 4: Using an Agent with Tools
-    # print("\n=== Example 4: Using an Agent with Tools ===")
-    # agent_with_tools_example()
+    print("\n=== Example 4: Using an Agent with Tools ===")
+    agent_with_tools_example()
 
     # Example 5: Using Memory for Conversation
     print("\n=== Example 5: Using Memory for Conversation ===")
