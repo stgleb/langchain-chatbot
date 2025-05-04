@@ -12,19 +12,16 @@ from langchain_openai import ChatOpenAI, OpenAI
 
 
 def simple_model_call():
-    # Initialize the OpenAI LLM
     llm = OpenAI(temperature=0)
 
-    # Call the model with a simple prompt
     response = llm.invoke(input="Explain quantum computing in one sentence.")
+
     print(f"LLM Response: {response}")
 
 
 def prompt_template_example():
-    # Initialize the OpenAI LLM
     llm = OpenAI(temperature=0.7)
 
-    # Create a prompt template
     template = "Write a {adjective} poem about {subject}."
     prompt_template = PromptTemplate(
         input_variables=["adjective", "subject"],
@@ -32,9 +29,8 @@ def prompt_template_example():
     )
 
     chain = prompt_template | llm
-
-    # Run the chain with inputs
     response = chain.invoke(input={"adjective": "funny", "subject": "programming"})
+
     print(f"Generated Prompt: {template.format(adjective='funny', subject='programming')}")
     print(f"LLM Response: {response}")
 
@@ -43,7 +39,6 @@ def chain_example():
     # Initialize the OpenAI LLM
     llm = OpenAI(temperature=0.7)
 
-    # Create a multi-step chain
     prompt_template1 = PromptTemplate(
         input_variables=["animal"],
         template="Generate 3 names for a {animal} character in a children's book."
@@ -54,16 +49,10 @@ def chain_example():
         template="Select the best name from these options and create a short story about this character: {names}"
     )
 
-    # Create the first chain
     chain1 = prompt_template1 | llm
-
-    # Create the second chain
     chain2 = prompt_template2 | llm
-
-    # Create a sequential chain
     sequential_chain = chain1 | chain2
 
-    # Run the sequential chain
     result = sequential_chain.invoke(input={"animal": "dolphin"})
     print(f"Chain Result: {result}")
 
@@ -100,10 +89,8 @@ def calculator(query: str) -> str:
 
 
 def agent_with_tools_example():
-    # Initialize the OpenAI chat model
     llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-16k")
 
-    # Define the calculator tool
     tools = [
         Tool(
             name="Calculator",
@@ -112,7 +99,6 @@ def agent_with_tools_example():
         )
     ]
 
-    # Create an agent with tools
     agent = initialize_agent(
         tools=tools,
         llm=llm,
@@ -127,10 +113,8 @@ def agent_with_tools_example():
 
 
 def memory_example():
-    # Initialize the OpenAI chat model
     llm = ChatOpenAI(temperature=0.7)
 
-    # Create a chat prompt template that correctly handles messages
     prompt = ChatPromptTemplate.from_messages([
         ("system", "You are a helpful assistant."),
         MessagesPlaceholder(variable_name="history"),
@@ -146,30 +130,25 @@ def memory_example():
             store[session_id] = InMemoryChatMessageHistory()
         return store[session_id]
 
-    # Create a runnable with message history
     pipeline = RunnableWithMessageHistory(
         runnable=prompt | llm,
         get_session_history=get_by_session_id,
-        # This configures how input and output messages are added to history
         input_messages_key="input",
         history_messages_key="history"
     )
 
-    # First user interaction
     response1 = pipeline.invoke(
         {"input": "Hi, my name is Bob. What's your name?"},
         config={"configurable": {"session_id": "foo"}}
     )
     print(f"AI: {response1.content}")
 
-    # Second user interaction
     response2 = pipeline.invoke(
         {"input": "What did I just tell you my name was?"},
         config={"configurable": {"session_id": "foo"}}
     )
     print(f"AI: {response2.content}")
 
-    # Third user interaction
     response3 = pipeline.invoke(
         {"input": "Tell me about yourself."},
         config={"configurable": {"session_id": "foo"}}
