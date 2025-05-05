@@ -5,6 +5,7 @@ import sys
 from langchain_openai import ChatOpenAI
 from langchain.memory import ConversationSummaryBufferMemory
 from langchain.chains import ConversationChain
+from langchain.prompts import PromptTemplate
 
 from animal_guess.main import prompt
 
@@ -23,7 +24,18 @@ memory = ConversationSummaryBufferMemory(
     return_messages=True # keep messages as BaseMessage objects
 )
 
-chain = ConversationChain(llm=chat_llm, memory=memory, verbose=False)
+prompt = PromptTemplate(
+    input_variables=["history", "input"],
+    template=(
+        "You are a friendly assistant.  The conversation so far:\n"
+        "{history}\n\n"
+        "Human: {input}\n"
+        "AI:"
+    ),
+)
+
+chain = ConversationChain(llm=chat_llm, memory=memory, prompt=prompt, verbose=False)
+
 
 if __name__ == "__main__":
     print("🤖  Chat – type 'exit' to quit")
