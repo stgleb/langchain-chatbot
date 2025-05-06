@@ -110,6 +110,7 @@ def agent_with_tools_example():
         response = agent.invoke(input="What is 25.5 + 10.8?")
         print(f"Agent Response: {response}")
         print(f"Total Tokens: {cb.total_tokens}")
+        print(f"Total cost", {cb.total_cost})
 
 
 def memory_example():
