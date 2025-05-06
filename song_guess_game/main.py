@@ -26,7 +26,7 @@ def build_stateless_chain(temperature: float) -> RunnableSerializable:
             ("human", "{fragment}"),
         ]
     )
-    return prompt | ChatOpenAI(temperature=temperature)
+    return prompt | ChatOpenAI(model="gpt-4o-mini", temperature=temperature)
 
 
 def build_stateful_chain(temperature: float) -> RunnableWithMessageHistory:
@@ -47,7 +47,7 @@ def build_stateful_chain(temperature: float) -> RunnableWithMessageHistory:
         return history_store
 
     return RunnableWithMessageHistory(
-        prompt | ChatOpenAI(temperature=temperature),
+        prompt | ChatOpenAI(model="gpt-4o-mini", temperature=temperature),
         get_session_history=get_history,
         input_messages_key="fragment",
         history_messages_key="history",
@@ -121,7 +121,9 @@ def main():
         choice = input("Enable memory? (on/off) > ").strip().lower()
         if choice in {"on", "off"}:
             memory_flag = choice == "on"
-        print("default to on.")
+            print("use", choice)
+        else:
+            print("default to on.")
         break
 
     repl(memory_flag, temperature=args.temp)
