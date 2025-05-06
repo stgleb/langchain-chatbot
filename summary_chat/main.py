@@ -7,8 +7,6 @@ from langchain.memory import ConversationSummaryBufferMemory
 from langchain.chains import ConversationChain
 from langchain.prompts import PromptTemplate
 
-from animal_guess.main import prompt
-
 if not os.getenv("OPENAI_API_KEY"):
     sys.exit("export OPENAI_API_KEY first")
 
